@@ -54,7 +54,7 @@ export default function Home() {
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
             <Cake className="w-12 h-12 text-purple-600" />
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent leading-tight py-1">
               Den Day
             </h1>
             <Sparkles className="w-12 h-12 text-pink-600" />
