@@ -1,165 +1,307 @@
 # Den Day - Virtual Birthday Party Platform
 
-A dynamic Next.js application for hosting virtual birthday celebrations with video calls, real-time chat, and interactive cake cutting simulations.
+A production-ready Next.js application for hosting virtual birthday celebrations with real-time video calls, live chat, and interactive features.
+
+## Overview
+
+Den Day is a web-based platform that enables users to host and join virtual birthday parties. Built with modern web technologies, it provides a seamless video conferencing experience with real-time communication capabilities.
 
 ## Features
 
-- 🎉 **Create Party**: Host a virtual birthday party and get a unique room code
-- 👥 **Join Party**: Join existing parties using a room code
-- 📹 **Real Video Calls**: WebRTC-powered peer-to-peer video streaming
-- 💬 **Real-time Chat**: Send messages and celebrate together
-- 🎂 **Virtual Cake Cutting**: Interactive cake cutting simulation with animations
-- 🎨 **Beautiful UI**: Modern, responsive design using shadcn/ui components
-- ⚡ **Dynamic Layout**: Video grid automatically reorganizes based on number of participants
-- 🔇 **Audio/Video Controls**: Toggle your microphone and camera on/off
-- 🎯 **Peer-to-Peer**: Direct WebRTC connections between participants
+### Core Functionality
+- **Party Management**: Create and join virtual parties using unique 6-character room codes
+- **Video Conferencing**: WebRTC-powered peer-to-peer video streaming with multiple participants
+- **Real-time Chat**: Instant messaging system with all party participants
+- **Interactive Celebrations**: Virtual cake cutting ceremony with animations and confetti effects
+- **Media Controls**: Toggle microphone and camera on/off during calls
+- **Responsive Design**: Modern UI optimized for desktop and mobile devices
+- **Dynamic Grid Layout**: Automatic video layout adjustment based on participant count
 
-## Tech Stack
+### Technical Features
+- Server-side signaling with Socket.io for production-grade connectivity
+- Secure room validation and management
+- Connection status indicators
+- Participant tracking and notifications
+- Custom scrollbar styling and smooth animations
 
+## Technology Stack
+
+### Frontend
 - **Framework**: Next.js 14 with App Router
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui
+- **Styling**: Tailwind CSS with custom animations
+- **UI Components**: shadcn/ui component library
 - **State Management**: Zustand
-- **Video/Audio**: WebRTC with SimplePeer
-- **Signaling**: localStorage (for local testing) - easily replaceable with WebSocket/Socket.io
 - **Icons**: Lucide React
+
+### Backend & Communication
+- **WebRTC**: SimplePeer for peer-to-peer connections
+- **Signaling Server**: Socket.io with Express
+- **Real-time Events**: Socket.io for chat and signaling
+
+### Deployment
+- **Frontend Hosting**: Vercel
+- **Backend Hosting**: Railway
+- **Environment Management**: Environment variables for configuration
+
+## Live Deployment
+
+- **Application**: https://den-day.vercel.app
+- **WebSocket Server**: https://den-day-production.up.railway.app
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ installed
+- Node.js 18 or higher
 - npm or yarn package manager
+- Modern web browser with WebRTC support
 
 ### Installation
 
-1. Install dependencies:
+1. Clone the repository:
+```bash
+git clone https://github.com/ChilliRoger/den-day.git
+cd den-day
+```
+
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-2. Run the development server:
+3. Configure environment variables:
+
+Create a `.env.local` file:
+```bash
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+NEXT_PUBLIC_SOCKET_URL=http://localhost:3001
+```
+
+4. Start the development servers:
 ```bash
 npm run dev
 ```
 
-3. Open [http://localhost:3000](http://localhost:3000) in your browser
+This will start both the Next.js frontend (port 3000) and Socket.io server (port 3001).
 
-## Usage
+5. Open http://localhost:3000 in your browser
+
+## Usage Guide
 
 ### Creating a Party
 
-1. Click "Create New Party" on the homepage
-2. Enter your name (as host) and the birthday person's name
-3. You'll receive a unique 6-character room code
-4. **Allow camera and microphone permissions when prompted**
-5. Share this code with participants
+1. Navigate to the homepage
+2. Click "Create New Party"
+3. Enter your name as the host
+4. Grant camera and microphone permissions when prompted
+5. Share the generated room code with participants
+6. Use the cake cutting button to start the celebration
 
 ### Joining a Party
 
-1. Click "Join Existing Party" on the homepage
-2. Enter the room code shared by the host
-3. Enter your name to join the celebration
-4. **Allow camera and microphone permissions when prompted**
-5. You'll be connected via video call with other participants
+1. Navigate to the homepage
+2. Click "Join Existing Party"
+3. Enter the room code provided by the host
+4. Enter your name
+5. Grant camera and microphone permissions
+6. You will be connected to the party room
 
-### Testing Video Calls Locally
+### Testing Locally
 
-**Important:** To test the video call feature with multiple participants on the same computer:
+To test multi-user functionality on a single computer:
 
-1. Open the first browser tab and create a party
+1. Create a party in a regular browser window
 2. Copy the room code
-3. Open a **second browser tab in incognito/private mode** (or use a different browser)
-4. Join the party using the room code
-5. Both tabs should now show video feeds from each other
+3. Open a new incognito/private window
+4. Join the party using the copied room code
+5. Grant permissions in both windows
 
-**Note:** The current implementation uses localStorage for signaling (peer discovery). This works for:
-- ✅ Multiple tabs in the same browser
-- ✅ Same computer testing
-- ❌ Different computers/devices (requires WebSocket server)
-
-For production use across different devices, you'll need to implement a WebSocket server for signaling.
-
-### Party Room Features
-
-- **Video Grid**: Automatically adjusts layout based on participant count (1-12+ participants)
-- **Chat**: Send messages to all participants
-- **Controls**: Toggle microphone and camera on/off
-- **Cake Cutting**: Host can initiate the virtual cake cutting ceremony
-- **Participant Count**: View real-time count of party attendees
+Note: Using incognito mode simulates different users on the same device.
 
 ## Project Structure
 
 ```
 den-day/
 ├── app/
-│   ├── layout.tsx           # Root layout
-│   ├── page.tsx             # Homepage with Create/Join options
-│   ├── globals.css          # Global styles
-│   └── party/
-│       └── [roomCode]/
-│           └── page.tsx     # Party room page
+│   ├── layout.tsx              # Root layout
+│   ├── page.tsx                # Homepage
+│   ├── globals.css             # Global styles
+│   └── party/[roomCode]/
+│       └── page.tsx            # Party room
 ├── components/
-│   ├── ui/                  # shadcn/ui components
-│   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   ├── dialog.tsx
-│   │   ├── input.tsx
-│   │   └── label.tsx
-│   └── party/               # Party-specific components
-│       ├── VideoGrid.tsx    # Dynamic video grid
-│       ├── ChatArea.tsx     # Real-time chat
-│       └── CakeCutting.tsx  # Cake cutting simulation
-├── store/
-│   └── partyStore.ts        # Zustand store for party state
-└── lib/
-    └── utils.ts             # Utility functions
+│   ├── ui/                     # UI components
+│   ├── party/
+│   │   ├── VideoGrid.tsx       # Video grid layout
+│   │   ├── ChatArea.tsx        # Chat interface
+│   │   └── CakeCutting.tsx     # Cake animation
+│   └── VideoCallGuide.tsx      # User guide
+├── server/
+│   └── index.js                # Socket.io server
+├── lib/
+│   ├── signaling.ts            # Socket.io client
+│   ├── webrtc.ts               # WebRTC management
+│   └── utils.ts                # Utilities
+└── store/
+    └── partyStore.ts           # State management
 ```
 
-## Dynamic Features
+## Architecture
 
-### Video Grid Layout
+### Video Grid System
 
-The video grid automatically adjusts based on participant count:
+The video grid dynamically adjusts layout based on participant count:
 - 1 participant: Full screen (600px height)
-- 2 participants: 2 columns (400px height)
-- 3-4 participants: 2 columns (300px height)
-- 5-6 participants: 3 columns (250px height)
-- 7+ participants: 4 columns (250px height)
+- 2 participants: 2-column grid (400px height)
+- 3-4 participants: 2-column grid (300px height)
+- 5-6 participants: 3-column grid (250px height)
+- 7+ participants: 4-column grid (250px height)
 
-### Real-time Communication
+### Communication Flow
 
-The application uses:
-- WebRTC for peer-to-peer video streaming
-- Zustand for state management
-- Browser MediaDevices API for camera/microphone access
+1. **Signaling**: Socket.io handles WebRTC signaling (offer/answer/ICE candidates)
+2. **Peer Connections**: SimplePeer establishes direct peer-to-peer connections
+3. **Media Streams**: Browser MediaDevices API captures audio/video
+4. **State Management**: Zustand maintains application state
+5. **Real-time Updates**: Socket.io broadcasts events to all participants
 
-## Building for Production
+## Deployment
+
+### Frontend Deployment (Vercel)
 
 ```bash
-npm run build
-npm start
+vercel --prod
 ```
 
-## Future Enhancements
+Set environment variables in Vercel dashboard:
+- `NEXT_PUBLIC_SOCKET_URL`: Your Socket.io server URL
 
-- [x] WebRTC video calling
-- [ ] Socket.io integration for production signaling (cross-device support)
-- [ ] Screen sharing capability
-- [ ] Virtual backgrounds
-- [ ] Recording functionality
-- [ ] Multiple party themes
-- [ ] Gift animations
-- [ ] Background music
-- [ ] Photo booth mode
-- [ ] More participants support (12+)
-- [ ] Mobile app version
+### Backend Deployment (Railway)
+
+```bash
+railway up
+```
+
+Set environment variables in Railway dashboard:
+- `NEXT_PUBLIC_APP_URL`: Your Vercel domain
+- `PORT`: 8080 (or Railway's assigned port)
+
+## API Endpoints
+
+### Socket.io Events
+
+**Client to Server:**
+- `create-room`: Create a new party room
+- `join-room`: Join an existing room
+- `offer`: Send WebRTC offer
+- `answer`: Send WebRTC answer
+- `ice-candidate`: Send ICE candidate
+- `chat-message`: Send chat message
+- `start-cake-cutting`: Initiate cake cutting
+
+**Server to Client:**
+- `room-created`: Room creation confirmation
+- `room-joined`: Room join confirmation
+- `user-joined`: New participant notification
+- `user-left`: Participant left notification
+- `offer`: Receive WebRTC offer
+- `answer`: Receive WebRTC answer
+- `ice-candidate`: Receive ICE candidate
+- `chat-message`: Receive chat message
+- `cake-cutting-started`: Cake cutting initiated
+- `room-closed`: Room closure notification
+
+### HTTP Endpoints
+
+- `GET /health`: Server health check
+- `GET /room/:roomCode`: Room status information
+
+## Configuration
+
+### Environment Variables
+
+**Frontend (.env.local / .env.production):**
+- `NEXT_PUBLIC_APP_URL`: Application URL
+- `NEXT_PUBLIC_SOCKET_URL`: Socket.io server URL
+
+**Backend:**
+- `PORT`: Server port (default: 3001)
+- `NEXT_PUBLIC_APP_URL`: Allowed origin for CORS
+
+## Browser Support
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+WebRTC and MediaDevices API support required.
+
+## Performance
+
+- Peer-to-peer connections minimize server load
+- Dynamic grid layout optimizes rendering
+- Efficient state management with Zustand
+- Lazy loading of components
+- Optimized WebRTC configurations with STUN servers
+
+## Security
+
+- Room code validation (6-character alphanumeric)
+- CORS configuration for allowed origins
+- Secure WebSocket connections (wss://)
+- Environment variable management
+- No persistent storage of media streams
+
+## Troubleshooting
+
+### Connection Issues
+- Verify Socket.io server is running
+- Check environment variables are correctly set
+- Ensure firewall allows WebRTC connections
+- Review browser console for errors
+
+### Video/Audio Problems
+- Grant camera and microphone permissions
+- Check device settings in browser
+- Test with browser's built-in media test
+- Verify no other application is using the devices
+
+### Chat Not Working
+- Confirm Socket.io connection is established
+- Check network connectivity
+- Review server logs for errors
+
+## Contributing
+
+Contributions are welcome. Please follow these guidelines:
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Open a pull request
 
 ## License
 
-MIT
+MIT License - See LICENSE file for details
 
-## Author
+## Acknowledgments
 
-Built with ❤️ for virtual celebrations
+- Next.js team for the framework
+- shadcn/ui for component library
+- SimplePeer for WebRTC abstraction
+- Socket.io for real-time communication
+
+## Support
+
+For issues and feature requests, please use the GitHub issue tracker.
+
+## Version History
+
+- 1.0.0: Initial production release
+  - WebRTC video conferencing
+  - Real-time chat
+  - Virtual cake cutting
+  - Socket.io signaling server
+  - Production deployment
