@@ -111,12 +111,12 @@ io.on('connection', (socket) => {
     console.log(`Creating room: ${roomCode} by ${userName}`);
     
     if (!isValidRoomCode(roomCode)) {
-      socket.emit('error', { message: 'Invalid room code format' });
+      socket.emit('room-error', { message: 'Invalid room code format' });
       return;
     }
 
     if (rooms.has(roomCode)) {
-      socket.emit('error', { message: 'Room already exists' });
+      socket.emit('room-error', { message: 'Room already exists' });
       return;
     }
 
@@ -153,20 +153,20 @@ io.on('connection', (socket) => {
     console.log(`${userName} attempting to join room: ${roomCode}`);
     
     if (!isValidRoomCode(roomCode)) {
-      socket.emit('error', { message: 'Invalid room code format' });
+      socket.emit('room-error', { message: 'Invalid room code format' });
       return;
     }
 
     const room = rooms.get(roomCode);
     
     if (!room) {
-      socket.emit('error', { message: 'Room does not exist' });
+      socket.emit('room-error', { message: 'Room does not exist' });
       return;
     }
 
     // Check if user is already in the room
     if (room.participants.has(userId)) {
-      socket.emit('error', { message: 'You are already in this room' });
+      socket.emit('room-error', { message: 'You are already in this room' });
       return;
     }
 

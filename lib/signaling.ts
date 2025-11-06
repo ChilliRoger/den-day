@@ -109,8 +109,25 @@ class SocketSignalingService {
   private setupEventListeners() {
     if (!this.socket) return;
 
-    // Remove all existing listeners first to prevent duplicates
-    this.socket.removeAllListeners();
+    // Remove specific event listeners to prevent duplicates, but keep connection handlers
+    const eventsToRemove = [
+      'room-created',
+      'room-joined',
+      'existing-participants',
+      'user-joined',
+      'user-left',
+      'room-closed',
+      'offer',
+      'answer',
+      'ice-candidate',
+      'chat-message',
+      'cake-cutting-started',
+      'room-error'
+    ];
+    
+    eventsToRemove.forEach(event => {
+      this.socket?.removeAllListeners(event);
+    });
 
     // Room events
     this.socket.on('room-created', (data) => {
@@ -144,6 +161,11 @@ class SocketSignalingService {
       console.log('Room closed:', data.reason);
       this.onRoomClosedCallback?.(data.reason);
       this.currentRoom = null;
+    });
+
+    this.socket.on('room-error', (data) => {
+      console.error('Room error:', data.message);
+      this.onErrorCallback?.(data.message);
     });
 
     // WebRTC signaling events
