@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Info, X } from "lucide-react";
 
 export function VideoCallGuide() {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   if (!isVisible) {
     return (
@@ -27,7 +27,7 @@ export function VideoCallGuide() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg flex items-center gap-2">
             <Info className="w-5 h-5 text-blue-600" />
-            Video Call Testing
+            How to Use Den Day
           </CardTitle>
           <Button
             variant="ghost"
@@ -40,17 +40,19 @@ export function VideoCallGuide() {
         </div>
       </CardHeader>
       <CardContent className="text-sm space-y-3">
-        <p className="font-semibold text-purple-600">Testing on same computer:</p>
+        <p className="font-semibold text-purple-600">Host a Party:</p>
         <ol className="list-decimal list-inside space-y-2 text-gray-700">
-          <li>Create a party in this tab</li>
-          <li>Copy the room code</li>
-          <li>Open a new <strong>incognito/private window</strong></li>
-          <li>Join using the room code</li>
-          <li>Allow camera/mic in both tabs</li>
+          <li>Click &quot;Create Party&quot; and enter your name</li>
+          <li>Share the room code with your guests</li>
+          <li>Allow camera and microphone access</li>
+          <li>Wait for guests to join</li>
+          <li>Click &quot;Cut the Cake&quot; to celebrate! 🎂</li>
         </ol>
-        <div className="bg-blue-50 border border-blue-200 rounded p-2 text-xs">
-          <p className="font-semibold text-blue-800">💡 Tip:</p>
-          <p className="text-blue-700">Use incognito mode to simulate different users on the same device!</p>
+        <div className="bg-blue-50 border border-blue-200 rounded p-2 text-xs mt-3">
+          <p className="font-semibold text-blue-800">💡 Tips:</p>
+          <p className="text-blue-700">• Use mute/video buttons to control your audio and video</p>
+          <p className="text-blue-700">• Chat with guests using the chat panel</p>
+          <p className="text-blue-700">• Share the room code via WhatsApp, email, or text</p>
         </div>
       </CardContent>
     </Card>
