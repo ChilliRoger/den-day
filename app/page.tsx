@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Cake, Users, Sparkles } from "lucide-react";
+import { VideoCallGuide } from "@/components/VideoCallGuide";
 
 export default function Home() {
   const router = useRouter();
@@ -204,6 +205,9 @@ export default function Home() {
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Video Call Guide */}
+      <VideoCallGuide />
     </main>
   );
 }

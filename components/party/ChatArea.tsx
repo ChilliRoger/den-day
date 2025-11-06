@@ -7,13 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Send, MessageSquare } from "lucide-react";
 import { Message } from "@/store/partyStore";
 import { usePartyStore } from "@/store/partyStore";
+import { socketSignaling } from "@/lib/signaling";
 
 interface ChatAreaProps {
   messages: Message[];
   currentUserName: string;
+  roomCode: string;
+  userId: string;
 }
 
-export function ChatArea({ messages, currentUserName }: ChatAreaProps) {
+export function ChatArea({ messages, currentUserName, roomCode, userId }: ChatAreaProps) {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { addMessage } = usePartyStore();
@@ -29,12 +32,10 @@ export function ChatArea({ messages, currentUserName }: ChatAreaProps) {
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
 
-    addMessage({
-      id: Date.now().toString(),
-      sender: currentUserName,
-      content: newMessage,
-      timestamp: new Date()
-    });
+    // Send message via Socket.io - server will broadcast it back to everyone including sender
+    socketSignaling.sendChatMessage(roomCode, newMessage, userId, currentUserName);
+    
+    // Don't add to local store here - wait for server broadcast to avoid duplicates
 
     setNewMessage("");
   };
@@ -47,21 +48,28 @@ export function ChatArea({ messages, currentUserName }: ChatAreaProps) {
   };
 
   return (
-    <Card className="h-[calc(100vh-200px)] flex flex-col">
-      <CardHeader>
+    <Card className="h-[calc(100vh-200px)] flex flex-col shadow-lg border-2 border-pink-100">
+      <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b-2 border-pink-100">
         <CardTitle className="flex items-center gap-2">
-          <MessageSquare className="w-5 h-5" />
-          Chat
+          <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+            <MessageSquare className="w-5 h-5 text-white" />
+          </div>
+          <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Party Chat
+          </span>
         </CardTitle>
       </CardHeader>
       
       <CardContent className="flex-1 flex flex-col p-4">
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+        <div className="flex-1 overflow-y-auto space-y-3 mb-4 pr-2 scrollbar-thin scrollbar-thumb-purple-300 scrollbar-track-gray-100">
           {messages.length === 0 ? (
-            <div className="text-center text-gray-500 mt-8">
-              <MessageSquare className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>No messages yet. Start the conversation!</p>
+            <div className="text-center text-gray-500 mt-12">
+              <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <MessageSquare className="w-10 h-10 text-purple-400" />
+              </div>
+              <p className="font-medium text-gray-600">No messages yet</p>
+              <p className="text-sm text-gray-400 mt-1">Start the conversation!</p>
             </div>
           ) : (
             messages.map((message) => (
@@ -69,24 +77,26 @@ export function ChatArea({ messages, currentUserName }: ChatAreaProps) {
                 key={message.id}
                 className={`flex flex-col ${
                   message.sender === currentUserName ? "items-end" : "items-start"
-                }`}
+                } animate-in slide-in-from-bottom-2 duration-300`}
               >
                 <div
-                  className={`max-w-[80%] rounded-lg p-3 ${
+                  className={`max-w-[85%] rounded-2xl px-4 py-3 shadow-sm ${
                     message.sender === "System"
-                      ? "bg-purple-100 text-purple-900 text-center w-full max-w-full"
+                      ? "bg-gradient-to-r from-purple-100 to-pink-100 text-purple-900 text-center w-full max-w-full border border-purple-200"
                       : message.sender === currentUserName
-                      ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white"
-                      : "bg-gray-200 text-gray-900"
+                      ? "bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md"
+                      : "bg-white text-gray-900 border border-gray-200"
                   }`}
                 >
                   {message.sender !== "System" && message.sender !== currentUserName && (
-                    <p className="text-xs font-semibold mb-1 opacity-75">
+                    <p className="text-xs font-bold mb-1 opacity-75">
                       {message.sender}
                     </p>
                   )}
-                  <p className="text-sm break-words">{message.content}</p>
-                  <p className="text-xs mt-1 opacity-75">
+                  <p className="text-sm break-words leading-relaxed">{message.content}</p>
+                  <p className={`text-xs mt-1.5 ${
+                    message.sender === currentUserName ? 'text-white/80' : 'text-gray-500'
+                  }`}>
                     {new Date(message.timestamp).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit"
@@ -100,20 +110,20 @@ export function ChatArea({ messages, currentUserName }: ChatAreaProps) {
         </div>
 
         {/* Input Area */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <Input
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Type a message..."
-            className="flex-1"
+            className="flex-1 border-2 border-purple-200 focus:border-purple-400 rounded-xl px-4 py-3 focus-visible:ring-purple-400"
           />
           <Button
             onClick={handleSendMessage}
             disabled={!newMessage.trim()}
-            className="bg-gradient-to-r from-purple-600 to-pink-600"
+            className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-xl px-6 py-3 shadow-lg hover:shadow-xl transition-all disabled:opacity-50"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-5 h-5" />
           </Button>
         </div>
       </CardContent>

@@ -4,6 +4,7 @@ export interface Participant {
   id: string;
   name: string;
   isHost: boolean;
+  isLocal?: boolean;
   stream: MediaStream | null;
 }
 
@@ -23,6 +24,7 @@ interface PartyStore {
   removeParticipant: (id: string) => void;
   updateParticipantStream: (id: string, stream: MediaStream) => void;
   addMessage: (message: Message) => void;
+  clearParticipants: () => void;
 }
 
 export const usePartyStore = create<PartyStore>((set) => ({
@@ -32,9 +34,16 @@ export const usePartyStore = create<PartyStore>((set) => ({
   
   setRoomCode: (code) => set({ roomCode: code }),
   
-  addParticipant: (participant) => set((state) => ({
-    participants: [...state.participants, participant]
-  })),
+  addParticipant: (participant) => set((state) => {
+    // Check if participant already exists
+    const exists = state.participants.some(p => p.id === participant.id);
+    if (exists) {
+      return state;
+    }
+    return {
+      participants: [...state.participants, participant]
+    };
+  }),
   
   removeParticipant: (id) => set((state) => ({
     participants: state.participants.filter(p => p.id !== id)
@@ -49,4 +58,6 @@ export const usePartyStore = create<PartyStore>((set) => ({
   addMessage: (message) => set((state) => ({
     messages: [...state.messages, message]
   })),
+  
+  clearParticipants: () => set({ participants: [] }),
 }));
