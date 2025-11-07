@@ -18,6 +18,17 @@ export function VideoGrid({ participants }: VideoGridProps) {
       const videoElement = videoRefs.current[participant.id];
       if (videoElement && participant.stream) {
         videoElement.srcObject = participant.stream;
+        
+        // Ensure audio plays for remote participants
+        if (!participant.isLocal) {
+          videoElement.volume = 1.0;
+          videoElement.muted = false;
+          
+          // Attempt to play (needed for some browsers)
+          videoElement.play().catch((error) => {
+            console.warn(`Auto-play blocked for ${participant.name}:`, error);
+          });
+        }
       }
     });
   }, [participants]);
@@ -74,7 +85,16 @@ export function VideoGrid({ participants }: VideoGridProps) {
             muted={participant.isLocal} // Mute local video to prevent echo
             className="w-full h-full object-cover"
             onLoadedMetadata={(e) => {
-              console.log(`📺 Video loaded for: ${participant.name}`);
+              const videoEl = e.currentTarget;
+              const stream = videoEl.srcObject as MediaStream;
+              if (stream) {
+                const audioTracks = stream.getAudioTracks();
+                const videoTracks = stream.getVideoTracks();
+                console.log(`📺 Video loaded for: ${participant.name}`);
+                console.log(`   Audio tracks: ${audioTracks.length}`, audioTracks.map(t => `${t.label} (enabled: ${t.enabled})`));
+                console.log(`   Video tracks: ${videoTracks.length}`, videoTracks.map(t => `${t.label} (enabled: ${t.enabled})`));
+                console.log(`   Video element muted: ${videoEl.muted}, volume: ${videoEl.volume}`);
+              }
             }}
           />
           
