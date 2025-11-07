@@ -58,6 +58,15 @@ export default function PartyRoom() {
   useEffect(() => {
     const currentUserName = role === "host" ? hostName || "Host" : participantName || "Guest";
     
+    console.log('🎉 Party Room Initialization:');
+    console.log('   Room Code:', roomCode);
+    console.log('   Role:', role);
+    console.log('   User Name:', currentUserName);
+    console.log('   Is Host:', role === "host");
+    console.log('   Host Name:', hostName);
+    console.log('   Birthday Person:', birthdayPerson);
+    console.log('   Participant Name:', participantName);
+    
     // Initialize party store
     setStoreRoomCode(roomCode);
     clearParticipants();
@@ -151,12 +160,22 @@ export default function PartyRoom() {
           // On error
           (error: string) => {
             console.error("Connection error:", error);
-            addMessage({
-              id: Date.now().toString(),
-              sender: "System",
-              content: `Connection error: ${error}`,
-              timestamp: new Date()
-            });
+            
+            // Show user-friendly error messages
+            if (error.includes('Room does not exist') || error.includes('Room not found')) {
+              alert('This party room does not exist. Please check the room code and try again.');
+              router.push('/');
+            } else if (error.includes('Room already exists')) {
+              alert('A room with this code already exists. Use "Join Party" to enter the room.');
+              router.push('/');
+            } else {
+              addMessage({
+                id: Date.now().toString(),
+                sender: "System",
+                content: `Connection error: ${error}`,
+                timestamp: new Date()
+              });
+            }
           }
         );
 

@@ -44,6 +44,8 @@ export default function Home() {
     const userName = prompt("Enter your name:");
     if (!userName) return;
     
+    console.log('🚪 Joining party:', joinCode.toUpperCase(), 'as:', userName, 'role: participant');
+    
     // Navigate to party room as participant
     router.push(`/party/${joinCode.toUpperCase()}?name=${encodeURIComponent(userName)}&role=participant`);
   };
